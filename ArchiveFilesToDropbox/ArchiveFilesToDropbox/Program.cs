@@ -38,8 +38,8 @@ namespace ArchiveFilesToDropbox
                 Logger.Information("Getting archive folder:{archiveFolder}", archiveFolder);
                 var archiveFiles = archiveFolder.GetFiles().OrderByDescending(f => f.LastWriteTime).Take(noOfFileToTake);
 
-                noOfFileToKeep = Math.Max(0, archiveFolder.GetFiles().Length - noOfFileToKeep);
-                var deleteFiles = archiveFolder.GetFiles().OrderByDescending(f => f.LastWriteTime).Take(noOfFileToKeep);
+                int noOfFileToDelete = Math.Max(0, archiveFolder.GetFiles().Length - noOfFileToKeep);
+                var deleteFiles = archiveFolder.GetFiles().OrderBy(f => f.LastWriteTime).Take(noOfFileToDelete);
 
                 foreach (var fileToAchive in archiveFiles)
                 {
