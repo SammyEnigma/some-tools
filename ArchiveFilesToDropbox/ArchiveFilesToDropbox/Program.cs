@@ -23,14 +23,24 @@ namespace ArchiveFilesToDropbox
             try
             {
                 var archiveFolderPath = ConfigurationManager.AppSettings["archiveFolder"];
-                int takeFile = int.Parse(ConfigurationManager.AppSettings["noOfLatestFileToArchive"] ?? "1");
+                int noOfFileToTake = int.Parse(ConfigurationManager.AppSettings["noOfLatestFileToArchive"] ?? "1");
+                int noOfFileToKeep = int.Parse(ConfigurationManager.AppSettings["noOfLatestFileToKeep"] ?? "5");
+
                 var archiveFolder = new DirectoryInfo(archiveFolderPath);
                 Logger.Information("Getting archive folder:{archiveFolder}", archiveFolder);
-                var matchingFiles = archiveFolder.GetFiles().OrderByDescending(f => f.LastWriteTime).Take(takeFile);
+                var archiveFiles = archiveFolder.GetFiles().OrderByDescending(f => f.LastWriteTime).Take(noOfFileToTake);
 
-                foreach (var file in matchingFiles)
+                noOfFileToKeep = Math.Max(0, archiveFolder.GetFiles().Length - noOfFileToKeep);
+                var deleteFiles = archiveFolder.GetFiles().OrderByDescending(f => f.LastWriteTime).Take(noOfFileToKeep);
+
+                foreach (var fileToAchive in archiveFiles)
                 {
-                    
+                    Logger.Information("File to be archived:{0}", fileToAchive.FullName);
+                }
+
+                foreach (var fileToDelete in deleteFiles)
+                {
+                    Logger.Warning("File to be deleted:{0}", fileToDelete.FullName);
                 }
 
             }
